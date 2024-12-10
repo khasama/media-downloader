@@ -108,3 +108,39 @@ export async function getIxiguaMediaSource(url) {
   await browser.close();
   return mediaSource;
 }
+
+export async function getDouyinMediaSource(url) {
+  const browser = await puppeteer.launch({ headless: true });
+  const page = await browser.newPage();
+
+  try {
+    await page.goto(url, { waitUntil: 'networkidle2' });
+
+    await page.waitForSelector('.xg-video-container');
+
+    const videoSrc = await page.evaluate(() => {
+      const container = document.querySelector('.xg-video-container');
+      if (!container) return null;
+
+      const video = container.querySelector('video');
+      if (!video) return null;
+
+      const sources = video.querySelectorAll('source');
+      if (!sources.length) return null;
+
+      return sources[sources.length - 1].src;
+    });
+
+    if (!videoSrc) {
+      await browser.close();
+      return;
+    }
+    await browser.close();
+    return videoSrc;
+
+  } catch (error) {
+    console.error(error);
+    await browser.close();
+    throw error;
+  }
+}
