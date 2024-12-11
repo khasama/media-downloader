@@ -3,7 +3,7 @@
 Install the library using npm:
 
 ```bash
-npm install @khasama/video-downloader
+npm install @khasama/media-downloader
 ```
 
 **Usage:**
@@ -11,14 +11,14 @@ npm install @khasama/video-downloader
 1. Import the required function:
 
    ```javascript
-   import { ixiguaDownloader } from "@khasama/video-downloader";
+   import { ixiguaDownloader } from "@khasama/media-downloader";
    ```
 
 2. Call the `ixiguaDownloader` function with the following arguments:
 
    - `url`: The URL of the Ixigua video you want to download (string).
    - `dir`: The directory where you want to save the downloaded video (string). This directory will be created if it doesn't exist.
-   - `callback` ({process, filename, err}): callback function.
+   - `callback` ({ process, filename, err }): callback function.
 
 **Example:**
 

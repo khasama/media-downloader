@@ -1,5 +1,5 @@
 {
-  "name": "@khasama/video-downloader",
+  "name": "@khasama/media-downloader",
   "version": "1.0.0",
   "main": "dist/index.js",
   "type": "module",
