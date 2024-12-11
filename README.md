@@ -23,7 +23,7 @@ npm install @khasama/media-downloader
 **Example:**
 
 ```javascript
-import { ixiguaDownloader } from "ixigua-downloader";
+import { ixiguaDownloader } from "@khasama/media-downloader";
 const videoUrl = "https://www.ixigua.com/7161999829802209795/";
 const downloadDir = "./downloads";
 
