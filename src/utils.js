@@ -4,17 +4,18 @@ import puppeteer from 'puppeteer';
 
 export async function downloadMedia(url, outputPath, referer, callback) {
   const writer = fs.createWriteStream(outputPath);
-
-  const fileName = outputPath.split("/").pop();
+  const fileName = outputPath.split("\\").pop();
+  const headers = {};
+  if (referer) {
+    headers['Referer'] = referer;
+  }
 
   try {
     const response = await axios({
       url,
       method: "GET",
       responseType: "stream",
-      headers: {
-        Referer: referer,
-      },
+      headers,
     });
 
     const totalLength = parseInt(response.headers["content-length"], 10);
@@ -143,4 +144,47 @@ export async function getDouyinMediaSource(url) {
     await browser.close();
     throw error;
   }
+}
+
+export async function getVideofkMediaSource(url) {
+  const browser = await puppeteer.launch({ headless: true });
+  const page = await browser.newPage();
+
+  try {
+    await page.goto(`https://www.videofk.com/search?url=${url}`, { waitUntil: 'networkidle2' });
+
+    await page.waitForSelector('div.video-files', { timeout: 10000 });
+
+    const result = await page.evaluate(() => {
+      const videoFilesDiv = document.querySelector('div.video-files');
+      if (!videoFilesDiv) return null;
+
+      const links = Array.from(videoFilesDiv.querySelectorAll('a[target="_blank"]'));
+      const hrefs = links.map(link => link.href);
+
+      const processedHrefs = hrefs.map(href => {
+        const parts = href.split('url=');
+        return parts.length > 1 ? parts[parts.length - 1] : null;
+      }).filter(Boolean); // Remove null or undefined values
+
+      return processedHrefs.length > 0 ? processedHrefs[processedHrefs.length - 1] : null;
+    });
+    await browser.close();
+    return result;
+  } catch (error) {
+    console.error('Error:', error.message);
+    await browser.close();
+  }
+}
+
+export async function getVideofkDownloadSource(url) {
+  const response = await axios({
+    url: `https://downloader.twdown.online/load_url`,
+    method: "GET",
+    params: {
+      url
+    },
+    responseType: 'text'
+  });
+  return response.data;
 }
